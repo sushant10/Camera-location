@@ -21,5 +21,3 @@ for pt in zip(*loc[::-1]):
 plt.imshow(cv2.cvtColor(img_rgb, cv2.COLOR_BGR2RGB),  interpolation='bicubic')
 #plt.plot([50,100],[80,100], 'c', linewidth=5)
 plt.show()
-
-#nothing
