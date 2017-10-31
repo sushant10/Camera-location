@@ -23,7 +23,7 @@ plt.imshow(cv2.cvtColor(img_rgb, cv2.COLOR_BGR2RGB),  interpolation='bicubic')
 #plt.plot([50,100],[80,100], 'c', linewidth=5)
 plt.show()
 """
-
+#trial
 img1 = cv2.imread('Images/pattern.png',0) # queryImage
 img_rgb = cv2.imread('Images/IMG_6719.JPG')
 img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
