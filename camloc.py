@@ -3,31 +3,43 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-"""
-#methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
- #           'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
+#get angle from homography matrix
+def getComponents(hg):
+    a=hg[0,0]
+    b=hg[0,1]
+    theta = np.arctan2(b,a)*(180/np.pi)
+    return theta
 
-img_rgb = cv2.imread('Images/IMG_6719.JPG')
-img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-template = cv2.imread('Images/pattern.png',0)
-w, h = template.shape[::-1]
-#method = eval(meth)
-res = cv2.matchTemplate(img_gray, template, cv2.TM_SQDIFF_NORMED)
-threshold = 0.9
-loc= np.where(res >=threshold)
+def rotate_bound(image, angle):
+    # grab the dimensions of the image and then determine the
+    # center
+    (h, w) = image.shape[:2]
+    (cX, cY) = (w // 2, h // 2)
 
-for pt in zip(*loc[::-1]):
-	cv2.rectangle(img_rgb,pt, (pt[0]+w,pt[1]+h), (0,255,255), 2)
+    # grab the rotation matrix (applying the negative of the
+    # angle to rotate clockwise), then grab the sine and cosine
+    # (i.e., the rotation components of the matrix)
+    M = cv2.getRotationMatrix2D((cX, cY), -angle, 1.0)
+    cos = np.abs(M[0, 0])
+    sin = np.abs(M[0, 1])
 
-plt.imshow(cv2.cvtColor(img_rgb, cv2.COLOR_BGR2RGB),  interpolation='bicubic')
-#plt.plot([50,100],[80,100], 'c', linewidth=5)
-plt.show()
-"""
+    # compute the new bounding dimensions of the image
+    nW = int((h * sin) + (w * cos))
+    nH = int((h * cos) + (w * sin))
+
+    # adjust the rotation matrix to take into account translation
+    M[0, 2] += (nW / 2) - cX
+    M[1, 2] += (nH / 2) - cY
+
+    # perform the actual rotation and return the image
+    return cv2.warpAffine(image, M, (nW, nH))
+
+
 MIN_MATCH_COUNT = 10
 
 img1 = cv2.imread('Images/pattern.png',0) # queryImage
-img_rgb = cv2.imread('Images/IMG_6719.JPG')
-img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+img_rgb = cv2.imread('Images/IMG_6719.JPG') #trainImage
+img2 = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
 img2 = cv2.resize(img_gray,None,fx=0.35, fy=0.35, interpolation = cv2.INTER_LINEAR )
 
 # Initiate SIFT detector
@@ -54,6 +66,7 @@ if len(good)>MIN_MATCH_COUNT:
     src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
     dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
 
+    #calculate homography matrix
     M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
     matchesMask = mask.ravel().tolist()
 
@@ -74,8 +87,15 @@ draw_params = dict(matchColor = (0,255,0), # draw matches in green color
 
 img3 = cv2.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
 
-plt.imshow(img3, 'gray'),plt.show()
+thetha=getComponents(M)
 
+print "Angle: ",thetha,"Train image pos: ",dst
+thetha_rad=thetha*(np.pi/180)
+imgtop=rotate_bound(img2, thetha)
+#plt.imshow(img3, 'gray'),plt.show()
+plt.imshow(imgtop, 'gray'),plt.show()
+
+#tried BFtemplate matching
 """
 # create BFMatcher object
 bf = cv2.BFMatcher(cv2.NORM_HAMMING,crossCheck=True)
