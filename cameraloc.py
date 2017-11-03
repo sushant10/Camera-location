@@ -4,79 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import sys
-"""
-def computePose(homography):
 
-	h10 = homography[0,0]
-	h11 = homography[0,1]
-	h12 = homography[0,2]
-	h20 = homography[1,0]
-	h21 = homography[1,1]
-	h22 = homography[1,2]
-	h30 = homography[2,0]
-	h31 = homography[2,1]
-	h32 = homography[2,2]
-
-	intrinsicInverse=np.linalg.inv(homography)
-	invC0 = intrinsicInverse[0,0]
-	invC1 = intrinsicInverse[0,1]
-	invC2 = intrinsicInverse[0,2]
-	invC3 = intrinsicInverse[1,0]
-	invC4 = intrinsicInverse[1,1]
-	invC5 = intrinsicInverse[1,2]
-	invC6 = intrinsicInverse[2,0]
-	invC7 = intrinsicInverse[2,1]
-	invC8 = intrinsicInverse[2,2]
-
-	invH10 = invC0*h10 + invC1*h11 + invC2*h12
-	invH11 = invC3*h10 + invC4*h11 + invC5*h12
-	invH12 = invC6*h10 + invC7*h11 + invC8*h12
-
-	lam = math.sqrt( invH10 * invH10 + invH11 * invH11 + invH12 * invH12 )
-
-	lam = 1.0 / lam
-	invC0 *= lam
-	invC1 *= lam
-	invC2 *= lam
-	invC3 *= lam
-	invC4 *= lam
-	invC5 *= lam
-	invC6 *= lam
-	invC7 *= lam
-	invC8 *= lam
-
-	# Create normalized R1 & R2:
-	r10 = invC0*h10 + invC1*h11 + invC2*h12
-	r11 = invC3*h10 + invC4*h11 + invC5*h12
-	r12 = invC6*h10 + invC7*h11 + invC8*h12
-
-	r20 = invC0*h20 + invC1*h21 + invC2*h22
-	r21 = invC3*h20 + invC4*h21 + invC5*h22
-	r22 = invC6*h20 + invC7*h21 + invC8*h22
-
-	#Get R3 orthonormal to R1 and R2:
-	r30 = r11 * r22 - r12 * r21
-	r31 = r12 * r20 - r10 * r22
-	r32 = r10 * r21 - r11 * r20
-	R=np.zeros((3,3))
-	# Put the rotation column vectors in the rotation matrix:
-	R[0][0] = r10
-	R[1][0] = r20
-	R[2][0] = r30
-	R[0][1] = r11
-	R[1][1] = r21
-	R[2][1] = r31
-	R[0][2] = r12
-	R[1][2] = r22
-	R[2][2] = r32
-
-	return R
-
-	# Calculate Translation Vector T:
-	t[0] = invC0*h30 + invC1*h31 + invC2*h32;
-	t[1] = invC3*h30 + invC4*h31 + invC5*h32;
-	t[2] = invC6*h30 + invC7*h31 + invC8*h32;
-"""
 MIN_MATCH_COUNT = 10
 VALID_NORM = 1e-6
 FOCAL_WIDTH = 330.0
@@ -203,7 +131,7 @@ img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
 trainImage = cv2.resize(img_gray,None,fx=0.35, fy=0.35, interpolation = cv2.INTER_LINEAR )
 a,dst= images(queryImage,trainImage)
 print "roll: ",a[0],"pitch: ",a[1],"yaw: ",a[2]
-#repeat for each image 
+#repeat for each image
 
 #thetha=getComponents(M)
 
